@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Love Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, #ff758c, #ff7eb3, #9c89ff, #82dfff);
+      background-size: 400% 400%;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      animation: gradientBG 15s ease infinite;
+      position: relative;
+    }
+    
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .container {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 25px;
+      padding: 40px;
+      text-align: center;
+      width: 90%;
+      max-width: 450px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      position: relative;
+      z-index: 2;
+      animation: fadeIn 1s ease-in-out, float 6s ease-in-out infinite;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    
+    h1 {
+      color: #ff4d6d;
+      margin-bottom: 25px;
+      font-size: 2.2rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .input-group {
+      position: relative;
+      margin: 20px 0;
+    }
+    
+    input {
+      width: 100%;
+      padding: 15px 20px;
+      border-radius: 15px;
+      border: 2px solid #ff4d6d;
+      outline: none;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.8);
+      transition: all 0.3s;
+    }
+    
+    input:focus {
+      border-color: #9c27b0;
+      box-shadow: 0 0 15px rgba(156, 39, 176, 0.3);
+      transform: scale(1.02);
+    }
+    
+    button {
+      background: linear-gradient(45deg, #ff4d6d, #9c27b0);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 50px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.3s;
+      box-shadow: 0 5px 15px rgba(156, 39, 176, 0.4);
+    }
+    
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(156, 39, 176, 0.6);
+    }
+    
+    button:active {
+      transform: translateY(1px);
+    }
+    
+    .result {
+      margin-top: 30px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #ff4d6d;
+      display: none;
+      animation: fadeIn 1s;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .hearts {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    .heart {
+      position: absolute;
+      bottom: -50px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 20px;
+      animation: floatUp 6s linear infinite;
+      text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    }
+    
+    @keyframes floatUp {
+      0% { 
+        transform: translateY(0) rotate(0deg) scale(0.5); 
+        opacity: 0; 
+      }
+      10% { 
+        opacity: 1; 
+      }
+      90% { 
+        opacity: 0.8; 
+      }
+      100% { 
+        transform: translateY(-100vh) rotate(720deg) scale(1.5); 
+        opacity: 0; 
+      }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    .share-btn {
+      background: linear-gradient(45deg, #1877f2, #3b5998);
+      margin-top: 20px;
+      display: none;
+    }
+    
+    .share-btn:hover {
+      background: linear-gradient(45deg, #0f5bb5, #2d4373);
+    }
+    
+    .music-control {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s;
+    }
+    
+    .music-control:hover {
+      transform: scale(1.1);
+    }
+    
+    .progress-bar {
+      height: 8px;
+      width: 100%;
+      background: #f0f0f0;
+      border-radius: 10px;
+      margin-top: 20px;
+      overflow: hidden;
+      display: none;
+    }
+    
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(45deg, #ff4d6d, #9c27b0);
+      border-radius: 10px;
+      transition: width 0.3s;
+    }
+    
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #ff4d6d;
+      opacity: 0.8;
+      z-index: 3;
+    }
+    
+    .love-meter {
+      height: 20px;
+      width: 100%;
+      background: #f0f0f0;
+      border-radius: 10px;
+      margin: 20px 0;
+      overflow: hidden;
+      display: none;
+    }
+    
+    .meter-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(45deg, #ff4d6d, #9c27b0);
+      border-radius: 10px;
+      transition: width 2s ease-in-out;
+    }
+    
+    .floating-hearts {
+      position: absolute;
+      font-size: 24px;
+      opacity: 0;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts"></div>
+  <div class="music-control" id="musicToggle">
+    <i class="fas fa-volume-up"></i>
+  </div>
+  
+  <div class="container">
+    <h1>💖 Love Calculator 💖</h1>
+    
+    <div class="input-group">
+      <input type="text" id="name1" placeholder="Enter Your Name" autocomplete="off">
+    </div>
+    
+    <div class="input-group">
+      <input type="text" id="name2" placeholder="Enter Partner's Name" autocomplete="off">
+    </div>
+    
+    <button onclick="calculateLove()">Calculate Love</button>
+    
+    <div class="love-meter">
+      <div class="meter-fill" id="meterFill"></div>
+    </div>
+    
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    
+    <div class="result" id="result"></div>
+    
+    <button class="share-btn" id="shareBtn" onclick="shareOnFacebook()">
+      <i class="fab fa-facebook"></i> Share on Facebook
+    </button>
+  </div>
+  
+  <audio id="bgMusic" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/01/20/audio_dc39bbc811.mp3?filename=soft-sweet-romantic-background-music-6440.mp3" type="audio/mpeg">
+  </audio>
+  
+  <script>
+    // DOM Elements
+    const name1Input = document.getElementById('name1');
+    const name2Input = document.getElementById('name2');
+    const resultDiv = document.getElementById('result');
+    const shareBtn = document.getElementById('shareBtn');
+    const musicToggle = document.getElementById('musicToggle');
+    const bgMusic = document.getElementById('bgMusic');
+    const progressBar = document.querySelector('.progress-bar');
+    const progress = document.getElementById('progress');
+    const loveMeter = document.querySelector('.love-meter');
+    const meterFill = document.getElementById('meterFill');
+    
+    // Music control
+    let musicPlaying = false;
+    
+    musicToggle.addEventListener('click', function() {
+      if (musicPlaying) {
+        bgMusic.pause();
+        musicToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
+      } else {
+        bgMusic.play().catch(e => console.log("Audio play failed:", e));
+        musicToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+      }
+      musicPlaying = !musicPlaying;
+    });
+    
+    // Create animated hearts in background
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.innerHTML = '💖';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.fontSize = Math.random() * 20 + 15 + 'px';
+      heart.style.animationDuration = Math.random() * 3 + 4 + 's';
+      document.querySelector('.hearts').appendChild(heart);
+      setTimeout(() => heart.remove(), 7000);
+    }
+    
+    // Create floating hearts animation
+    function createFloatingHearts() {
+      for (let i = 0; i < 15; i++) {
+        setTimeout(() => {
+          const heart = document.createElement('div');
+          heart.classList.add('floating-hearts');
+          heart.innerHTML = '💖';
+          heart.style.left = Math.random() * 100 + 'vw';
+          heart.style.top = Math.random() * 100 + 'vh';
+          heart.style.fontSize = Math.random() * 30 + 20 + 'px';
+          document.body.appendChild(heart);
+          
+          // Animate the heart
+          heart.animate([
+            { transform: 'translateY(0) scale(0.5)', opacity: 0 },
+            { transform: 'translateY(-20px) scale(1.2)', opacity: 1 },
+            { transform: 'translateY(-40px) scale(1)', opacity: 0 }
+          ], {
+            duration: 2000,
+            easing: 'ease-out'
+          });
+          
+          // Remove after animation
+          setTimeout(() => heart.remove(), 2000);
+        }, i * 100);
+      }
+    }
+    
+    // Create confetti effect
+    function createConfetti() {
+      for (let i = 0; i < 100; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.classList.add('confetti');
+          confetti.style.left = Math.random() * 100 + 'vw';
+          confetti.style.top = '-10px';
+          confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 65%)`;
+          confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+          document.body.appendChild(confetti);
+          
+          // Animate confetti
+          const animation = confetti.animate([
+            { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+            { transform: `translateY(100vh) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+          ], {
+            duration: Math.random() * 3000 + 2000,
+            easing: 'cubic-bezier(0.1, 0.2, 0.8, 0.9)'
+          });
+          
+          // Remove after animation
+          animation.onfinish = () => confetti.remove();
+        }, i * 30);
+      }
+    }
+    
+    // Calculate love compatibility
+    function calculateLove() {
+      const name1 = name1Input.value.trim();
+      const name2 = name2Input.value.trim();
+      
+      if(name1 === '' || name2 === ''){
+        showError('Please enter both names');
+        return;
+      }
+      
+      if(name1 === name2){
+        showError('Please enter two different names');
+        return;
+      }
+      
+      // Show progress bar and love meter
+      progressBar.style.display = 'block';
+      loveMeter.style.display = 'block';
+      resultDiv.style.display = 'flex';
+      shareBtn.style.display = 'none';
+      
+      // Animate progress bar
+      let width = 0;
+      const interval = setInterval(() => {
+        if (width >= 100) {
+          clearInterval(interval);
+        } else {
+          width += 2;
+          progress.style.width = width + '%';
+        }
+      }, 50);
+      
+      // Show calculating message with animation
+      resultDiv.innerHTML = '💭 Calculating your love compatibility...';
+      
+      // Calculate love score after delay
+      setTimeout(() => {
+        // More "scientific" love calculation algorithm 😉
+        const combinedNames = (name1 + name2).toLowerCase();
+        let uniqueChars = new Set(combinedNames);
+        let baseScore = Array.from(uniqueChars).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        
+        const loveScore = Math.abs(baseScore % 100);
+        const adjustedScore = Math.min(100, Math.max(60, loveScore)); // Keep between 60-100%
+        
+        // Animate love meter
+        meterFill.style.width = adjustedScore + '%';
+        
+        // Create floating hearts
+        createFloatingHearts();
+        
+        // Show result with animation
+        setTimeout(() => {
+          resultDiv.innerHTML = `❤️ Love Compatibility between <b>${name1}</b> & <b>${name2}</b> is <span style="color:#ff0000;font-size:1.3em;">${adjustedScore}%</span> ❤️`;
+          
+          // Show share button with animation
+          setTimeout(() => {
+            shareBtn.style.display = 'inline-block';
+            shareBtn.style.animation = 'fadeIn 1s';
+            
+            // Create confetti for high scores
+            if (adjustedScore > 85) {
+              createConfetti();
+            }
+          }, 500);
+        }, 1500);
+      }, 2000);
+    }
+    
+    // Show error message
+    function showError(message) {
+      resultDiv.style.display = 'flex';
+      resultDiv.innerHTML = `<span style="color:#ff3333;">${message}</span>`;
+      resultDiv.style.animation = 'shake 0.5s';
+      
+      // Remove animation after it completes
+      setTimeout(() => {
+        resultDiv.style.animation = '';
+      }, 500);
+    }
+    
+    // Share on Facebook
+    function shareOnFacebook() {
+      const resultText = document.getElementById('result').innerText;
+      const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=https://your-love-calculator.com&quote=${encodeURIComponent(resultText)}`;
+      window.open(shareUrl, '_blank');
+    }
+    
+    // Add shake animation for errors
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+        20%, 40%, 60%, 80% { transform: translateX(10px); }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Initialize background hearts
+    setInterval(createHeart, 300);
+    
+    // Try to autoplay music with user interaction
+    document.addEventListener('click', function() {
+      if (!musicPlaying) {
+        bgMusic.play().then(() => {
+          musicPlaying = true;
+          musicToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+        }).catch(e => console.log("Audio autoplay prevented:", e));
+      }
+    }, { once: true });
+  </script>
+</body>
+</html>
